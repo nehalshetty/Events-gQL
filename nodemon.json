@@ -1,0 +1,7 @@
+{
+  "env": {
+    "USER": "nehal",
+    "MONGO_PASSWORD": "mongodb123",
+    "DBNAME": "events-graphql"
+  }
+}
