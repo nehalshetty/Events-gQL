@@ -2,7 +2,13 @@ const Booking = require("../../schemas/booking");
 const { getUser, normalizeEvent, getEvent } = require("./merge");
 
 module.exports = {
-  bookings: async () => {
+  bookings: async (input, req) => {
+    console.log(req);
+    let isUserAuthenticated = req.isAuth;
+
+    if (!isUserAuthenticated) {
+      throw new Error("You should be logged in to access this feature");
+    }
     try {
       let bookingsResult = await Booking.find();
       //   let userResult = await getUser(bookingsResult.user);
@@ -17,13 +23,19 @@ module.exports = {
       console.log(err);
     }
   },
-  bookEvent: async ({ inputVal }) => {
-    let staticUserId = "5ee3aace6ec24623c888c8ed";
+  bookEvent: async ({ inputVal }, req) => {
+    let isUserAuthenticated = req.isAuth;
+
+    if (!isUserAuthenticated) {
+      throw new Error("You should be logged in to access this feature");
+    }
+
+    let userID = req.userId;
 
     try {
-      let newBooking = new Booking({ event: inputVal.id, user: staticUserId });
+      let newBooking = new Booking({ event: inputVal.id, user: userID });
       let bookingResult = await newBooking.save();
-      let userResult = await getUser.call(this, staticUserId);
+      let userResult = await getUser.call(this, userID);
 
       return {
         ...bookingResult._doc,
@@ -38,7 +50,13 @@ module.exports = {
       console.log(err);
     }
   },
-  cancelBooking: async ({ inputVal }) => {
+  cancelBooking: async ({ inputVal }, req) => {
+    let isUserAuthenticated = req.isAuth;
+
+    if (!isUserAuthenticated) {
+      throw new Error("You should be logged in to access this feature");
+    }
+
     try {
       let bookingResult = await Booking.findById(inputVal.id).populate("event");
       let event = {

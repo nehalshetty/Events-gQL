@@ -20,8 +20,14 @@ module.exports = {
       console.log("Getting events failed- ", err);
     }
   },
-  createEvent: async ({ inputVal }) => {
-    let currentUser = "5ee3aace6ec24623c888c8ed";
+  createEvent: async ({ inputVal }, req) => {
+    let isUserAuthenticated = req.isAuth;
+
+    if (!isUserAuthenticated) {
+      throw new Error("You should be logged in to access this feature");
+    }
+
+    let currentUser = req.userId;
     try {
       let newEvent = new Event({
         name: inputVal.name,
