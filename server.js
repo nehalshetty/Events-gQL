@@ -6,10 +6,23 @@ const graphQLHttp = require("express-graphql");
 
 const gQLSchema = require("./graphQL/schema");
 const gQLResolvers = require("./graphQL/resolvers");
+const checkAuth = require("./middleware/checkAuth");
 
 const app = express();
 
 app.use(bodyParser.json());
+app.use(checkAuth);
+
+app.use((req, res, next) => {
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader("Access-Control-Allow-Methods", "GET,POST,OPTIONS");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
+  if (req.method === "OPTIONS") {
+    return res.sendStatus(200);
+  }
+
+  next();
+});
 
 app.use(
   "/graphQLEndpoint",
